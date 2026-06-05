@@ -1,0 +1,605 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-body: #f4f5f7;
+    --bg-surface: #ffffff;
+    --bg-surface-hover: #f3f4f6;
+    --bg-active: #111827;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-on-active: #ffffff;
+    --text-label: #334155;
+    --border: #d1d5db;
+    --border-light: #cbd5e1;
+    --border-hover: #94a3b8;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --table-head-bg: #f1f5f9;
+    --table-head-border: #e2e8f0;
+    --table-row-border: #f1f5f9;
+    --chip-selected-bg: #dcfce7;
+    --color-btn-active-ring: #111827;
+    --sidebar-border: #e5e7eb;
+    --stats-errors: #ef4444;
+    --error-bg: #ef4444;
+    --error-text: #ffffff;
+    --check-mark: #22c55e;
+    /* Цвет корпуса куба — скрывает зазоры между стикерами через прозрачный canvas */
+    --cube-body: #2a2a2a;
+}
+
+[data-theme="dark"] {
+    --bg-body: #1a1a1a;
+    --bg-surface: #2a2a2a;
+    --bg-surface-hover: #383838;
+    --bg-active: #d4d4d4;
+    --text-primary: #e4e4e4;
+    --text-secondary: #999999;
+    --text-on-active: #1a1a1a;
+    --text-label: #cccccc;
+    --border: #484848;
+    --border-light: #3a3a3a;
+    --border-hover: #666666;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --table-head-bg: #333333;
+    --table-head-border: #3f3f3f;
+    --table-row-border: #222222;
+    --chip-selected-bg: #26382e;
+    --color-btn-active-ring: #d4d4d4;
+    --sidebar-border: #3a3a3a;
+    --cube-body: transparent;
+}
+
+body {
+    margin: 0;
+    font-family:
+        system-ui,
+        -apple-system,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
+    background: var(--bg-body);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+}
+
+/* --- САЙДБАР --- */
+.sidebar {
+    width: 18rem;
+    flex-shrink: 0;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--sidebar-border);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    z-index: 10;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    transition: margin-left 0.35s ease-in-out;
+}
+
+.sidebar-hidden {
+    margin-left: -18rem;
+}
+
+/* --- ЗАГОЛОВОК + ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ --- */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--sidebar-border);
+    padding-bottom: 0.5rem;
+}
+
+.sidebar-title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+/* --- МИНИ-МЕНЮ ТЕМЫ --- */
+.theme-toggle {
+    display: flex;
+    gap: 2px;
+    background: var(--bg-body);
+    border-radius: 0.4rem;
+    padding: 2px;
+}
+
+.theme-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 0.3rem;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    line-height: 1;
+}
+
+.theme-btn:hover {
+    color: var(--text-primary);
+}
+
+.theme-btn.active {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .theme-btn.active {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.setting-block h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.hint {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.setting-row input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid var(--border);
+    border-radius: 0.25rem;
+    background: var(--bg-surface);
+    cursor: pointer;
+    display: grid;
+    place-content: center;
+    transition: all 0.15s;
+}
+
+.setting-row input[type="checkbox"]:hover {
+    border-color: var(--border-hover);
+}
+
+.setting-row input[type="checkbox"]:checked {
+    background: var(--bg-active);
+    border-color: var(--bg-active);
+}
+
+.setting-row input[type="checkbox"]:checked::after {
+    content: "";
+    width: 0.55rem;
+    height: 0.55rem;
+    background: var(--text-on-active);
+    clip-path: polygon(14% 44%, 0% 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.cross-colors {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.color-btn {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 0.5rem;
+    border: 2px solid var(--border);
+    background: var(--swatch);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.15s;
+    position: relative;
+}
+
+.color-btn::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 0.55rem;
+    border: 2px solid transparent;
+    transition: border-color 0.15s;
+    pointer-events: none;
+}
+
+.color-btn.active::after {
+    border-color: var(--color-btn-active-ring);
+}
+
+/* --- ПЕРЕКЛЮЧАТЕЛЬ OLL/PLL --- */
+.mode-switch {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--bg-surface);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.mode-btn:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+}
+
+.mode-btn.active {
+    border-color: var(--bg-active);
+    background: var(--bg-active);
+    color: var(--text-on-active);
+}
+
+/* --- ТАБЫ РЕЖИМА ТРЕНИРОВКИ --- */
+.train-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.train-tab {
+    padding: 0.5rem 0.6rem;
+    border: 2px solid var(--border);
+    border-radius: 0.4rem;
+    background: var(--bg-surface);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+}
+
+.train-tab:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+}
+
+.train-tab.active {
+    border-color: var(--bg-active);
+    background: var(--bg-active);
+    color: var(--text-on-active);
+    font-weight: 600;
+}
+
+/* --- ЦЕНТРАЛЬНАЛЬНЫЙ ЭКРАН --- */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 3rem;
+}
+
+.cube-wrap {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    flex-shrink: 0;
+    pointer-events: none;
+    user-select: none;
+    margin-bottom: 0.5rem;
+    margin-top: -1rem;
+}
+
+/* SVG-силуэт куба — точная ортографическая проекция
+   при lat=25°, lon=25°. Закрашивает тело куба позади
+   прозрачного canvas'а twisty-player, скрывая зазоры. */
+.cube-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+
+    transform-origin: center center;
+    transform: scale(0.95) translate(5px, -2px) rotate(-3deg);
+}
+
+.cube-backdrop .cube-body {
+    fill: var(--cube-body);
+    transition: fill 0.3s;
+}
+
+#cube-player {
+    position: relative;
+    z-index: 1;
+}
+
+.cube-wrap twisty-player {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.controls-row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.btn {
+    padding: 0.4rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.btn:hover {
+    background: var(--bg-surface-hover);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Таймер */
+.timer {
+    font-size: 3.5rem;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--text-primary);
+    letter-spacing: -0.05em;
+    margin: 0 0 1rem 0;
+    line-height: 1;
+    user-select: none;
+}
+
+.timer.hidden {
+    visibility: hidden;
+}
+
+/* --- СЕТКА КНОПОК OLL/PLL --- */
+.oll-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 900px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.oll-grid.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.oll-btn {
+    width: 68px;
+    height: 86px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    padding: 0.4rem 0.2rem;
+    gap: 0.3rem;
+    transition:
+        border-color 0.1s,
+        background 0.1s;
+}
+
+.oll-btn:hover:not(.btn-error) {
+    background: var(--bg-surface-hover);
+    border-color: var(--border-hover);
+}
+
+.oll-btn .oll-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.oll-btn .oll-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-label);
+    line-height: 1;
+}
+
+/* Ошибка */
+.btn-error {
+    background-color: var(--error-bg) !important;
+    border-color: var(--error-bg) !important;
+    animation: shake 0.25s ease-in-out;
+}
+
+.btn-error .oll-label {
+    color: var(--error-text) !important;
+}
+
+@keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-4px);
+    }
+    75% {
+        transform: translateX(4px);
+    }
+}
+
+/* --- ТАБЛИЦА ИСТОРИИ --- */
+.stats-table {
+    width: 100%;
+    max-width: 900px;
+    margin-top: 1rem;
+    overflow-x: auto;
+}
+
+.stats-table.hidden {
+    display: none;
+}
+
+.stats-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    background: var(--bg-surface);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.stats-table thead {
+    background: var(--table-head-bg);
+}
+
+.stats-table th {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--table-head-border);
+    white-space: nowrap;
+}
+
+.stats-table td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--table-row-border);
+    color: var(--text-primary);
+}
+
+.stats-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.stats-table .stats-errors {
+    color: var(--stats-errors);
+    font-weight: 600;
+}
+
+/* --- СЕТКА ВЫБОРА АЛГОРИТМОВ --- */
+.select-area {
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 1rem;
+}
+
+.select-area.hidden {
+    display: none;
+}
+
+.select-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+.select-count {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-left: auto;
+}
+
+.select-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.select-chip {
+    width: 68px;
+    height: 86px;
+    background: var(--bg-surface);
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    padding: 0.4rem 0.2rem;
+    gap: 0.3rem;
+    transition:
+        border-color 0.15s,
+        background 0.15s;
+    position: relative;
+}
+
+.select-chip:hover {
+    border-color: var(--border-hover);
+}
+
+.select-chip.selected {
+    border-color: var(--bg-active);
+    background: var(--chip-selected-bg);
+}
+
+.select-chip.selected::after {
+    content: "\2713";
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: var(--check-mark);
+}
+
+.select-chip .oll-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.select-chip .oll-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-label);
+    line-height: 1;
+}
