@@ -1,2 +1,2 @@
-# 2 Sided OLL AND PLL Recognition
+# 2 Sided OLL and PLL Recognition
 
